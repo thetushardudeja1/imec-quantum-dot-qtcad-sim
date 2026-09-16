@@ -8,7 +8,7 @@ the cell an EDGE cell, which imec explicitly exclude from their own statistics.
 Here the domain is obtained the honest way: by building MORE CELLS. The central dot then
 has real neighbours on all four sides and is a genuine INTERIOR cell.
 
-GEOMETRY -- CORRECTED 2026-09-13. See HANDOFF.md sec.6e.
+GEOMETRY -- CORRECTED 2026-09-13. See docs/device_spec.md and docs/validation.md.
 The previous version derived the gate widths FROM the measured dot
 (CONF_W = PITCH - DOT_X, BARRIER_W = PITCH - DOT_Y - 2*GAP), i.e. it assumed the dot
 exactly fills the lithographic gap. It does not -- the dot is electrostatically defined

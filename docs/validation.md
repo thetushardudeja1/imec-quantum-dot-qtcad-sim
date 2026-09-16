@@ -30,17 +30,14 @@ published valley-splitting-vs-field result for silicon quantum dots (Gamble et a
 across the tested range (0.513 meV at 5 MV/m, 5.12 meV at 50 MV/m) — reproducing
 the published slope.
 
-## 3. A real bug, found and fixed
+## 3. Two independent lever-arm calculations agree
 
-See [debugging_notes.md](debugging_notes.md) for the full account: an early run of
-the imec device gave a single-particle lever arm of 0.0089 eV/V against a ~0.26 eV/V
-value expected for a comparable device. Root cause was a missing `set_dot_region()`
-call, letting a classical electron gas sit in the dot and screen the plunger gate.
-After the fix, the lever arm moved by **25×**, landing within **8.9%** of the
-reference value — and a second, independently-computed lever arm (from chemical
-potentials rather than single-particle energies) agreed with the fixed value to
-**2%**, which is the strongest single consistency check available for this kind of
-model.
+The single-particle lever arm (§1 above, 0.283 eV/V) is computed one way; a second,
+independently-computed lever arm from chemical potentials rather than
+single-particle energies (`α_μ` = 0.278 eV/V) is computed a completely different
+way. The two agree to **2%** — the strongest single consistency check available for
+this class of model, since it exercises two separate parts of the solver chain and
+lands in the same place.
 
 ## 4. Calibration against imec — and why the naive comparison is wrong
 

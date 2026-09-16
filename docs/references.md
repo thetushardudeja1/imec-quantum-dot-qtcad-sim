@@ -14,9 +14,8 @@ repository — copyrighted material is cited, not redistributed.
   Phys. Lett.* 109, 253101 (2016) — benchmark for the multivalley effective-mass
   (MVEMT) solver.
 - Beaudoin et al. — QTCAD methodology reference; source of the comparable-device
-  lever-arm value (0.26 eV/V) used to sanity-check the single-particle lever arm,
-  and of the `set_dot_region()` guidance discussed in
-  [debugging_notes.md](debugging_notes.md).
+  lever-arm value (0.26 eV/V) used to sanity-check the single-particle lever arm
+  in [validation.md](validation.md).
 
 ## Software
 

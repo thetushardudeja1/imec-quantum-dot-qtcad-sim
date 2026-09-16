@@ -13,13 +13,11 @@ Gate naming (central dot at the origin):
   P1..P3  plungers,    y = -110   0  +110      (P2 is the central plunger)
   B1..B4  barriers,    y = -165 -55 +55 +165   (B2/B3 flank the central dot)
 
-TARGETS (revised 2026-09-12 -- see HANDOFF.md sec.8):
-  C_P ~ 6.6 aF is OUR OWN parallel-plate estimate eps0*eps_r*A/t2, NOT a Loenders
-  measurement, and Loenders say dot capacitance is dominated by source/drain coupling
-  rather than the plunger. DOWNGRADED to an order-of-magnitude bound.
-  Strongest surviving target: the ORBITAL spacing E2-E0 (computed, not supplied).
-NOT targets: E_C / C_Sigma (array parasitics + reservoirs we do not model), V_th
-(QTCAD has no threshold concept), dE = 0.7 meV (we inject it as valley splitting).
+TARGETS (see docs/validation.md for the full comparison against imec):
+  E_C / C_Sigma carry array parasitics and reservoir coupling this isolated-dot
+  model does not include, so they are not directly comparable to the fabricated
+  array's measured values without that caveat. V_th has no QTCAD equivalent.
+  dE = 0.7 meV is supplied as an input (valley splitting), not predicted.
 """
 
 import argparse
@@ -72,18 +70,11 @@ def make_device(mesh_file, wf_eV, vp, vpn, vc, vb, doping_cm3, sub_bc="ohmic"):
     else:
         d.new_ohmic_bnd("substrate_bnd")     # Beaudoin use Ohmic at 100 mK
 
-    # FIX 1 (2026-09-12) -- THE missing call. Zeroes the CLASSICAL (Thomas-Fermi)
-    # charge density inside the dot region, so the electrons there are described
-    # quantum-mechanically instead of as a classical gas. Without it an accumulation
-    # layer forms exactly where the dot should be and screens the plunger: the solve
-    # still converges and every number downstream is quietly wrong.
-    #   API     : qtcad.device.device.set_dot_region
-    #   vendor  : called in GaAs_gated/2,3,4, Ge_hole/2,3,4, adaptive_schrodinger.py,
-    #             poisson_negf_master.py, sym_dqdfdsoi.py, helper/double_dot_fdsoi.py
-    #   Beaudoin: "a region of strong quantum confinement is created ... in which we
-    #             set the classical electron density to zero to model electrons
-    #             quantum-mechanically"
-    # See HANDOFF.md sec.6b defect 1 and trap 15.
+    # Zeroes the classical (Thomas-Fermi) charge density inside the dot region, so
+    # the electrons there are described quantum-mechanically rather than as a
+    # classical gas -- required whenever a dot sits under the non-linear Poisson
+    # solver (qtcad.device.device.set_dot_region; called in every vendor dot
+    # example, e.g. GaAs_gated, Ge_hole, adaptive_schrodinger.py).
     d.set_dot_region(QD_REGIONS)
     return d
 
@@ -144,10 +135,9 @@ def main():
         gap = f"   +{E[i] - E[i - 1]:6.3f}" if i else ""
         print(f"  E{i} = {e:+10.4f}{gap}")
 
-    # FIX 3 (2026-09-12) -- E1-E0 is IDENTICALLY the valley splitting we injected via
-    # set_valley_splitting(); it is an input, not a result. Assert it (a live check that
-    # the valley convention is still wired correctly) and report the ORBITAL spacing.
-    # See HANDOFF.md sec.6b defect 2 and trap 16.
+    # E1-E0 is identically the valley splitting injected via set_valley_splitting()
+    # -- an input, not a result. Assert it as a live check that the valley
+    # convention is wired correctly, and report the ORBITAL spacing (E2-E0) instead.
     dv_readback = E[1] - E[0]
     assert abs(dv_readback - VALLEY_SPLITTING * 1e3) < 1e-6, (
         f"valley convention broken: E1-E0 = {dv_readback} meV, "

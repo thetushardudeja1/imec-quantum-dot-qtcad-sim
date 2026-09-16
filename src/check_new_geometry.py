@@ -1,7 +1,7 @@
 """Corrected geometry (30 / 76 / 30 nm) vs the old derived one (37 / 50 / 50 nm).
 
 Same solver settings, same bias points, so the comparison is clean. The prediction from
-HANDOFF sec.6e is that ALL THREE changes push the dot bigger:
+the geometry notes below is that ALL THREE changes push the dot bigger:
   plunger  50 -> 76 nm   : should widen the dot in y (old sigma_y = 3.76 nm)
   conf gap 73 -> 80 nm   : should widen it slightly in x (old sigma_x = 5.53 nm)
   barrier  50 -> 30 nm   : less depletion between rows, also widens y

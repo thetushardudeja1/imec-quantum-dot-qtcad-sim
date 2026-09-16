@@ -45,7 +45,7 @@ E0 = np.array([128.6181, 114.4709, 86.1641, 57.8414, 25.5080, -31.4976, -88.2336
 
 # linear fit over the near-linear window used for the reported alpha_sp (2.85-3.05 V band
 # is what the vendor leverarm.Solver used); here we fit the reported 7-point sweep and
-# annotate BOTH the vendor-solver value (0.2831, from HANDOFF Sec.6d) and our own fit.
+# annotate BOTH the vendor-solver value (0.2831, -- see docs/validation.md) and our own fit.
 fit = np.polyfit(vp, E0, 1)  # meV/V
 alpha_ownfit = -fit[0] / 1000.0  # eV/V  (E = -e*alpha*V + const)
 alpha_vendor = 0.2831
@@ -145,7 +145,7 @@ plt.close(fig)
 
 # ---------------------------------------------------------------------------
 # Fig 5: honest calibration comparison -- ours vs imec MEASURED vs imec SIMULATED
-# numbers from HANDOFF.md Sec.8a/8c/8d
+# numbers from docs/validation.md
 labels = ["$C_P$ (aF)", "$E_C$ (meV)", "lever arm $\\alpha$"]
 ours   = [1.45, 30.68, 0.278]
 imec_measured = [6.1, 4.01, 0.152]
@@ -177,7 +177,7 @@ fig.savefig(OUT / "fig5_calibration_comparison.png")
 plt.close(fig)
 
 # ---------------------------------------------------------------------------
-# Fig 6: energy-level diagram at V_P = 2.9V, t1=15nm  (from HANDOFF Sec.6c spectrum)
+# Fig 6: energy-level diagram at V_P = 2.9V, t1=15nm  (see docs/validation.md)
 levels = [
     (114.471, 115.171, "$n=0$"),
     (125.332, 126.032, "$n=1$"),

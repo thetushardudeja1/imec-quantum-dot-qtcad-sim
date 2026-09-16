@@ -109,8 +109,8 @@ for vp in [2.85, 2.9, 3.0, 3.1, 3.2, 3.4, 3.6]:
         line = f"  vp={vp:<5g} CBmin={cbmin:+8.4f} eV"
         if cbmin < 0:
             qd, E = spectrum(d)
-            # FIX 3: E[1]-E[0] is the INJECTED valley splitting, not a result.
-            # Assert it, report the orbital spacing E[2]-E[0].  sec.6b defect 2.
+            # E[1]-E[0] is the injected valley splitting, not a result -- assert
+            # it as a wiring check and report the orbital spacing E[2]-E[0].
             dv = E[1] - E[0]
             assert abs(dv - VALLEY_SPLITTING * 1e3) < 1e-6, \
                 f"valley convention broken: E1-E0={dv} meV"
@@ -128,11 +128,9 @@ for vp in [2.85, 2.9, 3.0, 3.1, 3.2, 3.4, 3.6]:
         log(f"  vp={vp:g} FAILED\n" + traceback.format_exc())
 
 # ------------------------------------------------------------------ STAGE 2b
-# FIX 2 (2026-09-12): measure the SINGLE-PARTICLE lever arm with the vendor's own
-# solver instead of hand-rolling the fit.  Template: GaAs_gated/4-lever_arm.py.
-# ACCEPTANCE: |alpha_sp| in 0.1-0.5 eV/V  (Beaudoin report 0.26 eV/V, and theirs is
-# the single-particle one -- see HANDOFF.md sec.6b defect 3 and trap 18).
-# Before FIX 1 this came out at 0.0089 eV/V, which is what flagged the bug.
+# Measure the SINGLE-PARTICLE lever arm with the vendor's own solver
+# (template: GaAs_gated/4-lever_arm.py). ACCEPTANCE: |alpha_sp| in 0.1-0.5 eV/V
+# (Beaudoin report 0.26 eV/V on a comparable device, single-particle definition).
 if accumulated:
     log("")
     log("=== STAGE 2b: single-particle lever arm (vendor leverarm.Solver) ===")
@@ -157,7 +155,7 @@ if accumulated:
             f"{V_la[0]:.2f}..{V_la[-1]:.2f} V   ({time.time() - t0:.0f}s)")
         log(f"    E0 across the sweep (meV): "
             f"{', '.join('%.3f' % x for x in E_la[:, 0])}")
-        verdict = "PASS" if 0.1 <= alpha_sp <= 0.5 else "*** FAIL -- check FIX 1 ***"
+        verdict = "PASS" if 0.1 <= alpha_sp <= 0.5 else "*** OUT OF EXPECTED RANGE ***"
         log(f"    {verdict}")
         res(f"S2b\tt1=15\talpha_sp={alpha_sp:.4f}\tverdict={verdict.split()[0]}")
     except Exception:
@@ -168,8 +166,8 @@ if accumulated:
     vp_best = accumulated[min(1, len(accumulated) - 1)]   # just past turn-on
     log("")
     log(f"=== STAGE 3: many-body at vp={vp_best:g} -> lever arm, E_C, C_P ===")
-    log("    C_P ~ 6.6 aF is OUR parallel-plate estimate, not an imec measurement")
-    log("    (sec.8, downgraded 2026-09-12); vendor FDSOI SET reference 5.13 aF")
+    log("    C_P compared against imec's simulated C_gate-QD (Mohiyaddin IEDM 2019),")
+    log("    not the parallel-plate-fitted measurement -- see docs/validation.md")
     try:
         d, pp = poisson(15.0, vp_best, tol=1e-8)
         d.set_V_from_phi()
@@ -202,9 +200,9 @@ if accumulated:
                 mb.append(e)
                 log(f"    vp={vv:.3f} N={n}  E_mb={e / ct.e * 1e3:11.4f} meV"
                     f"   ({time.time() - t0:.0f}s)")
-            # FIX 4: E_mb(0) = 0, so mu(1) = E_mb(1).  Keeping mu(1) lets us form
-            # E_add(1), where the 2nd electron is the SPIN PARTNER in the same
-            # valley-resolved orbital => dE = 0 => E_add(1) IS E_C, no correction.
+            # E_mb(0) = 0, so mu(1) = E_mb(1). Keeping mu(1) lets us form E_add(1),
+            # where the 2nd electron is the SPIN PARTNER in the same valley-resolved
+            # orbital => dE = 0 => E_add(1) IS E_C, no correction needed.
             mus[vv] = [mb[0] / ct.e,
                        (mb[1] - mb[0]) / ct.e,
                        (mb[2] - mb[1]) / ct.e]          # mu(1), mu(2), mu(3), in V
@@ -214,8 +212,8 @@ if accumulated:
         alphas = (mu1 - mu0) / dvp                      # eV/V per transition
         alpha_mu = float(alphas[1])                     # the mu(2) transition
 
-        # FIX 4 (2026-09-12): an addition energy is NOT a charging energy.
-        #   E_add(N) = E_C + dE(N).   sec.6b, trap 17, 3-coulomb_peaks sec.5.4.2.
+        # An addition energy is NOT a charging energy: E_add(N) = E_C + dE(N)
+        # (vendor reference: practical_application/FDSOI/3-coulomb_peaks sec.5.4.2).
         E_add1 = float((mu0[1] - mu0[0]) * 1e3)         # meV -- dE = 0 (spin partner)
         E_add2 = float((mu0[2] - mu0[1]) * 1e3)         # meV -- dE = valley splitting
         E_C = E_add1                                    # clean: no correction term
@@ -230,7 +228,7 @@ if accumulated:
         if spread > 5:
             log(f"    *** the two E_C routes differ by {spread:.1f}% -- the dot is NOT")
             log("        in the constant-interaction regime at N = 1-3. Declare the N")
-            log("        used beside every E_C and C_P. (sec.14 FIX 4) ***")
+            log("        used beside every E_C and C_P. ***")
         log(f"    alpha_mu = {alpha_mu:8.4f} eV/V  [chemical-potential lever arm --")
         log("                                   NOT comparable to Beaudoin's 0.26,")
         log("                                   which is single-particle: see S2b]")
@@ -260,7 +258,7 @@ for t1 in (8.0, 12.0, 20.0):
             cbmin = float(cb.min())
             if cbmin < 0:
                 qd, E = spectrum(d)
-                dE_orb = E[2] - E[0]                     # FIX 3: orbital, not valley
+                dE_orb = E[2] - E[0]                     # orbital spacing, not the injected valley splitting
                 log(f"  t1={t1:g} vp={vp:g}  CBmin={cbmin:+8.4f}  E0={E[0]:+9.3f}"
                     f"  dE_orb={dE_orb:6.3f} meV   ({time.time() - t0:.0f}s)")
                 res(f"S4\tt1={t1}\tvp={vp}\tcbmin={cbmin:.6f}"

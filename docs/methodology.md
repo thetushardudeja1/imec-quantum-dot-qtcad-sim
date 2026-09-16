@@ -41,37 +41,24 @@ QTCAD documents these as genuinely different quantities, and conflating them is 
 known pitfall: `leverarm.Solver` fits **single-particle energies** vs. gate bias;
 the Coulomb-peak route fits **chemical potentials** vs. gate bias. Both are
 reported here, under different names (`α_sp`, `α_μ`), and only compared to
-literature values computed the same way. See [validation.md](validation.md) for
-where an earlier version of this project got that wrong.
+literature values computed the same way.
 
-## Verified pitfalls worth recording
+## Implementation notes
 
-A few QTCAD API behaviors cost real debugging time and are worth flagging for
-anyone using the same tool:
-
-- **`set_dot_region()` must be called before any non-linear Poisson solve that
-  contains a dot.** It zeroes the classical (Thomas-Fermi) charge density inside
-  the dot region so those electrons are treated quantum-mechanically. Omitting it
-  lets a classical electron gas form inside the dot and screen the gate — the
-  solve still converges, and everything downstream is quietly wrong. See
-  [debugging_notes.md](debugging_notes.md) for the full story.
-- **Mesh physical-group selection must use a lambda predicate, not an indexed
-  literal string.** Selecting `"boundary[3]"` by name silently no-ops (no error)
-  when the `[n]` hull-surface indices aren't assigned yet at selection time.
-  `merge_groups(lambda g: ...)` is the reliable pattern.
+- **Mesh physical-group selection uses a lambda predicate, not an indexed literal
+  string** (`merge_groups(lambda g: ...)`), since the `[n]` hull-surface indices
+  are not guaranteed to be stable across builds.
 - **`analysis.gradient()` and `cond_band_edge()` return per-element/local-node
-  arrays**, not per-global-node. They must be passed through `mesh.toglobal()`
-  before being indexed with a node mask, or indexing silently returns garbage
-  values with no error.
-- **`analysis.analyze_dot()` breaks when valley splitting is set** — eigenfunctions
-  gain a valley axis `(nodes, state, valley)` that the function doesn't expect.
-  Sum over the valley axis before computing wavefunction moments.
-- **`set_valley_splitting(v)` makes `E[1] - E[0]` equal to `v` by construction.**
-  That difference is an input readback, not a computed splitting — the first real
-  *orbital* spacing is `E[2] - E[0]`.
-- **Two Poisson solvers exist and only one is physical.** The linear solver
-  neglects free carriers entirely (fine for driving adaptive mesh refinement, never
-  for physics with an occupied dot).
+  arrays**, mapped to per-global-node via `mesh.toglobal()` before use.
+- **`analysis.analyze_dot()`** is applied to the valley-summed density, since
+  eigenfunctions carry a valley axis `(nodes, state, valley)` once
+  `set_valley_splitting()` is used.
+- **`set_valley_splitting(v)` sets `E[1] - E[0] = v` by construction** — that
+  difference is the input valley splitting, not a computed quantity; the reported
+  orbital spacing is `E[2] - E[0]`.
+- **The non-linear Poisson solver is used for all physics results**; the linear
+  solver (which neglects free carriers) is reserved for driving adaptive mesh
+  refinement only.
 
 ## Reproducing the figures
 

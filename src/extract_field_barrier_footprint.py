@@ -11,7 +11,7 @@ re-solved (~30 s per bias).
 
 Footprint convention: `analysis.analyze_dot` defines size = 4*sigma (+-2 sigma) of
 |psi_0|^2 per axis. That is the VENDOR's convention -- stated explicitly because the
-records already note that dot-length metrics are convention-dependent (HANDOFF traps).
+records already note that dot-length metrics are convention-dependent (see docs/methodology.md).
 A participation area A_eff = (integral |psi|^2)^2 / integral |psi|^4 is reported
 alongside it as a convention-free cross-check.
 """
