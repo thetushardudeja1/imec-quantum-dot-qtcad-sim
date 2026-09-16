@@ -1,0 +1,13 @@
+# Produced by src/sweep_confinement.py, V_P held fixed at 2.9 V.
+# The run was intentionally stopped after 3 of 6 planned points (V_C up to 2.5 V
+# was far outside the device's realistic operating range and was consuming RAM
+# without adding useful information). These 3 points are transcribed from the
+# run's own console output, since the script only writes its results file after
+# the full sweep completes.
+# CONFOUNDED above V_C=1.0 V: V_P was held fixed rather than re-tuned to keep the
+# electron count constant, so E0 crosses the Fermi level within this range and the
+# dot is being filled with additional electrons, not just resized.
+vcb	cbmin_eV	E0_meV	size_x_nm	size_y_nm	area_nm2	dE_orb_meV
+0.00	-0.0215	114.471	22.1	15.0	332	10.862
+0.50	-0.1168	15.445	23.8	15.7	374	9.237
+1.00	-0.2085	-80.122	26.8	16.5	444	7.214

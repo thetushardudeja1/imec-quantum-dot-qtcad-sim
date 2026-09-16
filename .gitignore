@@ -1,0 +1,27 @@
+# Generated FEM meshes and geometry archives (150-550 MB each; regenerate via
+# src/imec_qd_3x3_builder.py with a QTCAD license -- see THIRD_PARTY_NOTICES.md)
+*.msh
+*.xao
+
+# Saved simulation state (potential fields, wavefunctions)
+*.hdf5
+*.h5
+
+# Copyrighted reference papers -- cite, don't redistribute (docs/references.md)
+refs/
+*.pdf
+
+# The licensed vendor package itself, if ever copied in by accident
+qtcad-2.2.5/
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.ipynb_checkpoints/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+*.bak
+*.swp

@@ -1,0 +1,18 @@
+# Reproduces the environment used for this project. QTCAD itself is licensed
+# software and is NOT installable from this file -- see THIRD_PARTY_NOTICES.md
+# for how to obtain it from Nanoacademic Technologies. Everything else here is
+# open source and sufficient to run src/make_figures_from_results.py (figures 1-6)
+# without a QTCAD license at all.
+name: qtcad
+channels:
+  - conda-forge
+dependencies:
+  - python=3.13
+  - numpy
+  - matplotlib
+  - h5py
+  - gmsh
+  - pyvista
+  - pip
+  # After activating this environment, install QTCAD per Nanoacademic's
+  # instructions (license required): https://docs.nanoacademic.com/qtcad/
