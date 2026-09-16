@@ -1,4 +1,4 @@
-"""imec SiMOS 3x3 quantum-dot array — geometry builder (REAL gate widths).
+"""imec SiMOS 3x3 quantum-dot array, geometry builder (REAL gate widths).
 
 Replaces the single-cell builder, which used gate widths inflated 3x (110/90 nm instead
 of 37/50) purely to grow the simulation domain. That suppressed C_P -- the one clean

@@ -49,7 +49,7 @@ def res(row):
 
 
 log("#" * 72)
-log("CAMPAIGN START — imec 3x3 interior cell")
+log("CAMPAIGN START, imec 3x3 interior cell")
 log("#" * 72)
 
 try:

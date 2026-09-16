@@ -1,4 +1,4 @@
-"""imec SiMOS 3x3 array — device definition and solve (INTERIOR cell).
+"""imec SiMOS 3x3 array, device definition and solve (INTERIOR cell).
 
 Uses the corrected geometry (real 37 nm confinement gates, 50 nm barriers) built by
 imec_qd_3x3_builder.py, and the published parameters:

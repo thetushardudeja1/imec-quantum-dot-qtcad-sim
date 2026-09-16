@@ -4,7 +4,7 @@
 
 Simulation uses [QTCAD](https://docs.nanoacademic.com/qtcad/) 2.2.5 (Nanoacademic
 Technologies), a finite-element Schrödinger-Poisson solver for gated semiconductor
-quantum devices. It is licensed software — see
+quantum devices. It is licensed software, see
 [THIRD_PARTY_NOTICES.md](../THIRD_PARTY_NOTICES.md).
 
 **What QTCAD can do, used here:** non-linear (self-consistent) Poisson with
@@ -14,24 +14,24 @@ energies; multivalley EMT (a real valley-splitting calculation from Bloch
 amplitudes, not a fitted constant).
 
 **What it cannot do:** drift-diffusion transport, mobility models, self-heating,
-band tails. There is no "threshold voltage" concept in the tool — any comparison
+band tails. There is no "threshold voltage" concept in the tool, any comparison
 to a measured V_th needs a declared proxy, never presented as literally the
 threshold.
 
 ## Pipeline
 
-1. **Geometry** (`src/imec_qd_3x3_builder.py`) — builds a 3×3 interior cell of the
+1. **Geometry** (`src/imec_qd_3x3_builder.py`), builds a 3×3 interior cell of the
    imec array (real gate widths, not the isolated single-cell shortcut used
    early on) via QTCAD's `Builder`/`Mask`/`Polygon` API, meshed coarsely
    everywhere except a refined region around the central dot.
-2. **Device + solve** (`src/imec_qd_3x3_device.py`) — defines materials, dopants,
+2. **Device + solve** (`src/imec_qd_3x3_device.py`), defines materials, dopants,
    gate boundary conditions and the dot region, then solves the non-linear
    Poisson equation followed by the confined Schrödinger equation on a sub-mesh
    around the central dot.
 3. **Campaigns** (`src/campaign_3x3.py`, `src/sweep_confinement.py`,
-   `src/check_new_geometry.py`) — sweep plunger/confinement bias, extracting
+   `src/check_new_geometry.py`), sweep plunger/confinement bias, extracting
    lever arm, orbital spectrum, and many-body addition energies at each point.
-4. **Post-hoc extraction** (`src/extract_field_barrier_footprint.py`) — reloads a
+4. **Post-hoc extraction** (`src/extract_field_barrier_footprint.py`), reloads a
    saved Poisson solution (no re-solve) to compute the vertical confining field,
    lateral barrier height, and dot footprint from the wavefunction.
 
@@ -53,7 +53,7 @@ literature values computed the same way.
 - **`analysis.analyze_dot()`** is applied to the valley-summed density, since
   eigenfunctions carry a valley axis `(nodes, state, valley)` once
   `set_valley_splitting()` is used.
-- **`set_valley_splitting(v)` sets `E[1] - E[0] = v` by construction** — that
+- **`set_valley_splitting(v)` sets `E[1] - E[0] = v` by construction**, that
   difference is the input valley splitting, not a computed quantity; the reported
   orbital spacing is `E[2] - E[0]`.
 - **The non-linear Poisson solver is used for all physics results**; the linear
@@ -62,9 +62,9 @@ literature values computed the same way.
 
 ## Reproducing the figures
 
-- `src/make_figures_from_results.py` — figures 1–6, pure post-processing of the
+- `src/make_figures_from_results.py`, figures 1–6, pure post-processing of the
   numbers in `results/*.txt`. Runs anywhere with matplotlib, no QTCAD required.
-- `src/make_device_figures.py` — figures 7–9, device cross-sections and band
+- `src/make_device_figures.py`, figures 7–9, device cross-sections and band
   diagrams sliced from a saved Poisson solution. Requires a QTCAD installation, a
   built mesh, and a saved potential field, none of which are shipped here (mesh
   files run 150–550 MB, and QTCAD is licensed software). See the script's

@@ -14,7 +14,7 @@ and is not the author's to redistribute. To run any script that imports `qtcad`,
 obtain a license directly from Nanoacademic Technologies
 (<https://docs.nanoacademic.com/qtcad/>).
 
-If you use QTCAD in your own work, Nanoacademic requests specific citation —
+If you use QTCAD in your own work, Nanoacademic requests specific citation,
 see <https://docs.nanoacademic.com/qtcad/citing/> for their current guidance.
 
 ## Data and geometry not included
